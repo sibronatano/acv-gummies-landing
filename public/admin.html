@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة التحكم – علكة خل التفاح</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --green: #2d8c4e; --green-dark: #1a5c32; --gold: #c9a84c;
+      --gray-50: #f8faf9; --gray-100: #f0f4f1; --gray-200: #e0e7e3;
+      --gray-600: #4a5568; --gray-800: #1a202c;
+      --red: #e53e3e; --blue: #3182ce; --yellow: #d69e2e;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Tajawal', sans-serif; direction: rtl; background: var(--gray-50); color: var(--gray-800); min-height: 100vh; }
+
+    /* LOGIN */
+    .login-page {
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(160deg, #1a5c32, #2d8c4e);
+    }
+    .login-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 48px 40px;
+      width: 100%; max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      text-align: center;
+    }
+    .login-card h1 { font-size: 1.6rem; font-weight: 800; margin-bottom: 6px; }
+    .login-card p { color: var(--gray-600); font-size: 0.9rem; margin-bottom: 28px; }
+    .login-card input {
+      width: 100%; padding: 14px 16px;
+      border: 2px solid var(--gray-200); border-radius: 10px;
+      font-size: 1rem; font-family: 'Tajawal', sans-serif;
+      outline: none; transition: border 0.3s;
+      text-align: center; margin-bottom: 16px;
+    }
+    .login-card input:focus { border-color: var(--green); }
+    .login-card button {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, var(--green), var(--green-dark));
+      color: #fff; border: none; border-radius: 10px;
+      font-size: 1rem; font-weight: 700; cursor: pointer;
+      font-family: 'Tajawal', sans-serif; transition: all 0.3s;
+    }
+    .login-card button:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(45,140,78,0.35); }
+    .login-err { color: var(--red); font-size: 0.9rem; margin-top: 10px; display: none; }
+
+    /* DASHBOARD */
+    .dashboard { display: none; }
+    .topbar {
+      background: linear-gradient(135deg, var(--green-dark), var(--green));
+      color: #fff; padding: 16px 24px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar h1 { font-size: 1.3rem; font-weight: 800; }
+    .topbar-right { display: flex; align-items: center; gap: 14px; }
+    .btn-logout {
+      background: rgba(255,255,255,0.2); color: #fff;
+      border: none; padding: 8px 18px; border-radius: 50px;
+      cursor: pointer; font-family: 'Tajawal', sans-serif;
+      font-size: 0.9rem; font-weight: 600; transition: all 0.3s;
+    }
+    .btn-logout:hover { background: rgba(255,255,255,0.3); }
+    .btn-refresh {
+      background: var(--gold); color: #fff;
+      border: none; padding: 8px 18px; border-radius: 50px;
+      cursor: pointer; font-family: 'Tajawal', sans-serif;
+      font-size: 0.9rem; font-weight: 600; transition: all 0.3s;
+    }
+    .btn-refresh:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    .main { padding: 28px 24px; max-width: 1300px; margin: 0 auto; }
+
+    /* STATS */
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+    .stat-card {
+      background: #fff; border-radius: 14px; padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.07); border: 1px solid var(--gray-200);
+      display: flex; align-items: center; gap: 16px;
+    }
+    .stat-icon { font-size: 2rem; }
+    .stat-info span { display: block; font-size: 0.8rem; color: var(--gray-600); font-weight: 600; }
+    .stat-info strong { font-size: 1.7rem; font-weight: 800; color: var(--gray-800); }
+
+    /* FILTER ROW */
+    .filter-row {
+      display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center;
+    }
+    .filter-row input, .filter-row select {
+      padding: 10px 16px; border: 1px solid var(--gray-200); border-radius: 8px;
+      font-family: 'Tajawal', sans-serif; font-size: 0.9rem;
+      outline: none; transition: border 0.3s;
+    }
+    .filter-row input:focus, .filter-row select:focus { border-color: var(--green); }
+    .filter-row input { flex: 1; min-width: 200px; }
+
+    /* TABLE */
+    .table-wrap {
+      background: #fff; border-radius: 16px; overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.08); border: 1px solid var(--gray-200);
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead { background: linear-gradient(135deg, var(--green-dark), var(--green)); }
+    thead th { color: #fff; padding: 14px 16px; font-size: 0.88rem; font-weight: 700; text-align: right; }
+    tbody tr { border-bottom: 1px solid var(--gray-100); transition: background 0.2s; }
+    tbody tr:hover { background: var(--gray-50); }
+    tbody tr:last-child { border-bottom: none; }
+    tbody td { padding: 14px 16px; font-size: 0.88rem; color: var(--gray-800); vertical-align: middle; }
+
+    /* STATUS BADGE */
+    .status-badge {
+      display: inline-block; padding: 4px 12px; border-radius: 50px;
+      font-size: 0.78rem; font-weight: 700;
+    }
+    .status-new { background: #ebf8ff; color: #2b6cb0; }
+    .status-contacted { background: #fefcbf; color: #744210; }
+    .status-shipped { background: #f0fff4; color: #276749; }
+
+    /* STATUS SELECT */
+    .status-select {
+      padding: 6px 10px; border: 1px solid var(--gray-200); border-radius: 8px;
+      font-family: 'Tajawal', sans-serif; font-size: 0.85rem; cursor: pointer;
+      background: #fff; outline: none;
+    }
+    .status-select:focus { border-color: var(--green); }
+
+    /* DELETE BTN */
+    .btn-delete {
+      background: none; border: 1px solid var(--red); color: var(--red);
+      padding: 6px 14px; border-radius: 8px; cursor: pointer;
+      font-family: 'Tajawal', sans-serif; font-size: 0.82rem; font-weight: 700;
+      transition: all 0.2s;
+    }
+    .btn-delete:hover { background: var(--red); color: #fff; }
+
+    /* EMPTY STATE */
+    .empty-state { text-align: center; padding: 60px 20px; color: var(--gray-600); }
+    .empty-state div { font-size: 3rem; margin-bottom: 14px; }
+    .empty-state p { font-size: 1rem; }
+
+    /* TOAST */
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: var(--gray-800); color: #fff;
+      padding: 12px 24px; border-radius: 10px; font-size: 0.9rem; font-weight: 600;
+      z-index: 9999; display: none;
+      font-family: 'Tajawal', sans-serif;
+    }
+
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 600px) {
+      .stats-grid { grid-template-columns: 1fr; }
+      .main { padding: 16px; }
+      table { font-size: 0.8rem; }
+      thead th, tbody td { padding: 10px 10px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div class="login-page" id="loginPage">
+  <div class="login-card">
+    <div style="font-size:3rem; margin-bottom:12px;">🛡️</div>
+    <h1>لوحة التحكم</h1>
+    <p>علكة خل التفاح – إدارة الطلبات</p>
+    <input type="password" id="pwdInput" placeholder="أدخل كلمة المرور" onkeydown="if(event.key==='Enter')login()" />
+    <button onclick="login()">دخول</button>
+    <div class="login-err" id="loginErr">❌ كلمة المرور غير صحيحة</div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="dashboard" id="dashboard">
+  <div class="topbar">
+    <h1>📦 لوحة التحكم – الطلبات</h1>
+    <div class="topbar-right">
+      <button class="btn-refresh" onclick="loadOrders()">🔄 تحديث</button>
+      <button class="btn-logout" onclick="logout()">تسجيل الخروج</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">📦</div>
+        <div class="stat-info"><span>إجمالي الطلبات</span><strong id="statTotal">0</strong></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🆕</div>
+        <div class="stat-info"><span>طلبات جديدة</span><strong id="statNew">0</strong></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">📞</div>
+        <div class="stat-info"><span>تم التواصل</span><strong id="statContacted">0</strong></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🚚</div>
+        <div class="stat-info"><span>تم الشحن</span><strong id="statShipped">0</strong></div>
+      </div>
+    </div>
+
+    <!-- Filter -->
+    <div class="filter-row">
+      <input type="text" id="searchInput" placeholder="🔍 بحث بالاسم أو الجوال أو المدينة..." oninput="renderTable()" />
+      <select id="filterStatus" onchange="renderTable()">
+        <option value="">كل الحالات</option>
+        <option value="جديد">جديد</option>
+        <option value="تم التواصل">تم التواصل</option>
+        <option value="تم الشحن">تم الشحن</option>
+      </select>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>الاسم</th>
+            <th>الجوال</th>
+            <th>المدينة</th>
+            <th>الكمية</th>
+            <th>الحالة</th>
+            <th>التاريخ</th>
+            <th>إجراء</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTable"></tbody>
+      </table>
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <div>📭</div>
+        <p>لا توجد طلبات بعد</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let adminPwd = '';
+let allOrders = [];
+
+function login() {
+  const pwd = document.getElementById('pwdInput').value;
+  fetch('/api/admin/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ password: pwd })
+  }).then(r => r.json()).then(data => {
+    if (data.success) {
+      adminPwd = pwd;
+      document.getElementById('loginPage').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      loadOrders();
+    } else {
+      document.getElementById('loginErr').style.display = 'block';
+    }
+  }).catch(() => {
+    document.getElementById('loginErr').style.display = 'block';
+  });
+}
+
+function logout() {
+  adminPwd = '';
+  allOrders = [];
+  document.getElementById('loginPage').style.display = 'flex';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('pwdInput').value = '';
+  document.getElementById('loginErr').style.display = 'none';
+}
+
+function loadOrders() {
+  fetch('/api/admin/orders', { headers: { 'x-admin-password': adminPwd } })
+    .then(r => r.json()).then(data => {
+      if (data.success) {
+        allOrders = data.orders;
+        updateStats();
+        renderTable();
+      }
+    });
+}
+
+function updateStats() {
+  document.getElementById('statTotal').textContent = allOrders.length;
+  document.getElementById('statNew').textContent = allOrders.filter(o => o.status === 'جديد').length;
+  document.getElementById('statContacted').textContent = allOrders.filter(o => o.status === 'تم التواصل').length;
+  document.getElementById('statShipped').textContent = allOrders.filter(o => o.status === 'تم الشحن').length;
+}
+
+function renderTable() {
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const statusFilter = document.getElementById('filterStatus').value;
+
+  let filtered = allOrders.filter(o => {
+    const matchSearch = !search ||
+      o.name.toLowerCase().includes(search) ||
+      o.phone.includes(search) ||
+      o.city.toLowerCase().includes(search);
+    const matchStatus = !statusFilter || o.status === statusFilter;
+    return matchSearch && matchStatus;
+  });
+
+  const tbody = document.getElementById('ordersTable');
+  const empty = document.getElementById('emptyState');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  tbody.innerHTML = filtered.map((o, i) => {
+    const date = new Date(o.timestamp).toLocaleString('ar-SA', { dateStyle: 'short', timeStyle: 'short' });
+    const statusClass = o.status === 'جديد' ? 'status-new' : o.status === 'تم التواصل' ? 'status-contacted' : 'status-shipped';
+    return `
+      <tr id="row-${o.id}">
+        <td>${i + 1}</td>
+        <td><strong>${escHtml(o.name)}</strong></td>
+        <td dir="ltr">${escHtml(o.phone)}</td>
+        <td>${escHtml(o.city)}</td>
+        <td style="text-align:center">${o.quantity}</td>
+        <td>
+          <select class="status-select" onchange="updateStatus('${o.id}', this.value)">
+            <option value="جديد" ${o.status==='جديد'?'selected':''}>🆕 جديد</option>
+            <option value="تم التواصل" ${o.status==='تم التواصل'?'selected':''}>📞 تم التواصل</option>
+            <option value="تم الشحن" ${o.status==='تم الشحن'?'selected':''}>🚚 تم الشحن</option>
+          </select>
+        </td>
+        <td style="font-size:0.8rem;color:#666">${date}</td>
+        <td><button class="btn-delete" onclick="deleteOrder('${o.id}')">🗑️ حذف</button></td>
+      </tr>`;
+  }).join('');
+}
+
+function updateStatus(id, status) {
+  fetch(`/api/admin/orders/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', 'x-admin-password': adminPwd },
+    body: JSON.stringify({ status })
+  }).then(r => r.json()).then(data => {
+    if (data.success) {
+      const order = allOrders.find(o => o.id === id);
+      if (order) order.status = status;
+      updateStats();
+      showToast('✅ تم تحديث الحالة');
+    }
+  });
+}
+
+function deleteOrder(id) {
+  if (!confirm('هل أنت متأكد من حذف هذا الطلب؟')) return;
+  fetch(`/api/admin/orders/${id}`, {
+    method: 'DELETE',
+    headers: { 'x-admin-password': adminPwd }
+  }).then(r => r.json()).then(data => {
+    if (data.success) {
+      allOrders = allOrders.filter(o => o.id !== id);
+      updateStats();
+      renderTable();
+      showToast('🗑️ تم حذف الطلب');
+    }
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 3000);
+}
+
+function escHtml(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// Auto-refresh every 60s
+setInterval(() => { if (adminPwd) loadOrders(); }, 60000);
+</script>
+</body>
+</html>
