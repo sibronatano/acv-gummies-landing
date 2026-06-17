@@ -106,7 +106,7 @@ async function submitOrder(e) {
   const name = document.getElementById('name').value.trim();
   const phone = document.getElementById('phone').value.trim();
   const city = document.getElementById('city').value;
-  const qtyEl = form.querySelector('input[name="quantity"]:checked');
+  const qtyEl = document.getElementById('quantity') || form.querySelector('input[name="quantity"]:checked');
 
   if (!qtyEl) {
     showAlert('يرجى اختيار الكمية', 'error');
